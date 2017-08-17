@@ -1,76 +1,63 @@
 from __future__ import print_function
-import datetime
-import requests
-from bs4 import BeautifulSoup
 
-day_index = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-levels = ['fitness', 'performance']
+from datetime import datetime, date, timedelta
 
-class WOD:
+from workout import WOD, WORKOUTS_TABLE, LEVELS
+from utils import exec_sql
 
-	base_url = 'http://www.crossfitinvictus.com/wod/'
+def get_latest_wod(level):
+	latest_wod_sql = 'SELECT MAX(workout_date) FROM {tbl} WHERE workout_level = \"{wod_level}\"'.\
+		format(tbl=WORKOUTS_TABLE, wod_level=level)
 
-	def __init__(self, wod_date, wod_day, level):
-		self.wod_date = wod_date
-		self.wod_day = wod_day
-		self.wod_level = level
-		self.wod_url = self.base_url + self.wod_date + '-' + self.wod_level
-		self.alt_wod_url = self.base_url + self.wod_date + '-performance-fitness'
-
-	def __repr__(self):
-		return self.wod_url
-
-def get_workout(wod_url, alt_wod_url):
-
-	workout_found = False
-	response = requests.get(wod_url)
-	if response.status_code == 200:
-		workout_found = True
+	results = exec_sql(latest_wod_sql)
+	if results[0][0] is not None:
+		latest_date_str = results[0][0]
 	else:
-		response = requests.get(alt_wod_url)
-		if response.status_code == 200:
-			workout_found = True
+		latest_date_str = '2017-08-01'
 	
-	if workout_found:
-		soup = BeautifulSoup(response.text, 'html.parser')
-		wod_desc = soup.find("meta",  property="og:description")
-		return wod_desc['content']
-	else:
-		return 'Workout does not exist at URL: %s' % wod_url
+	return datetime.strptime(latest_date_str, '%Y-%m-%d').date()
+
+def get_list_dates_to_retrieve(level):
+
+	list_of_dates_to_retrieve = []
+	latest_wod_date = get_latest_wod(level)
+	today = date.today()
+	delta = today - latest_wod_date
+	for i in range(1, delta.days + 1):
+		list_of_dates_to_retrieve.append(latest_wod_date + timedelta(days=i))		
+	return list_of_dates_to_retrieve
+
+def update_wods():
+	print('Updating WOD database ...')
+	for level in LEVELS:
+		list_of_dates = get_list_dates_to_retrieve(level)
+		if len(list_of_dates) > 0:
+			for wod_date in list_of_dates:
+				wod_day = wod_date.strftime('%A')
+				wod = WOD(wod_date, wod_day, level)
+				wod.retrieve()
+				wod.save()
+			print('All WODs updated for %s' % level)
+		else:
+			print('Nothing to update for %s' % level)
 
 def main():
-	today = datetime.date.today()
+	update_wods()
+	
+	# for key in sorted(last_week_wod_dict.iterkeys()):
+	# 	wod_instance = last_week_wod_dict[key][0]
+	# 	print('%s - %s ' % (wod_instance.wod_level, wod_instance.wod_date))
+	# 	if key != 7:
+	# 		print(get_workout(wod_instance.wod_url, wod_instance.alt_wod_url))
+	# 	else:
+	# 		print('No workout on Sunday')
+	# 	print('-------------------\n')
 
-	# MON = 0, SUN = 6 -> SUN = 0 .. SAT = 6
-	idx = (today.weekday() + 1) % 7 
-
-	last_week_wod_dict = {}
-
-	for i in range(1, 8):
-		wod_date = today - datetime.timedelta(7+idx-i)
-		wod_day = wod_date.strftime('%A')
-		wod_date_str = '{:%B-%d-%Y}'.format(wod_date).replace('-0', '-').lower()
-
-		last_week_wod_dict[i] = []
-
-		for level in levels:
-			wod = WOD(wod_date_str, wod_day, level)
-			last_week_wod_dict[i].append(wod)
-
-	for key in sorted(last_week_wod_dict.iterkeys()):
-		wod_instance = last_week_wod_dict[key][0]
-		print('%s - %s ' % (wod_instance.wod_level, wod_instance.wod_date))
-		if key != 7:
-			print(get_workout(wod_instance.wod_url, wod_instance.alt_wod_url))
-		else:
-			print('No workout on Sunday')
-		print('-------------------\n')
-
-def print_dict(my_dict):
-	for key in sorted(my_dict.iterkeys()):
-		print('Key: %s' % (key))
-		print('Value: %s' % (my_dict[key]))
-		print('----------------------')
+# def print_dict(my_dict):
+# 	for key in sorted(my_dict.iterkeys()):
+# 		print('Key: %s' % (key))
+# 		print('Value: %s' % (my_dict[key]))
+# 		print('----------------------')
 
 if __name__ == '__main__':
 	main()

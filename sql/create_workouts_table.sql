@@ -6,5 +6,7 @@ CREATE TABLE IF NOT EXISTS invictus_workouts
 	workout_alt_url text,
 	workout_level text,
 	workout_desc text,
+	workout_html text,
+	workout_final text,
 	workout_exists integer
 )

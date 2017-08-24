@@ -1,14 +1,31 @@
 from __future__ import print_function
 import datetime
 import requests
+import re
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 from bs4 import BeautifulSoup
-
+from html2text import html2text
 from utils import exec_sql
 
 WORKOUTS_TABLE = 'invictus_workouts'
 LEVELS = ['fitness', 'performance']
 BASE_URL = 'http://www.crossfitinvictus.com/wod/'
+
+html_escape_table = {
+	"&": "&amp;",
+	'"': "&quot;",
+	"'": "&apos;",
+	">": "&gt;",
+	"<": "&lt;",
+}
+
+def html_escape(text):
+	"""Produce entities within text."""
+	return "".join(html_escape_table.get(c,c) for c in text)
 
 class WOD:
 
@@ -21,6 +38,8 @@ class WOD:
 		self.wod_alt_url = BASE_URL + self.wod_date_str + '-performance-fitness'
 		self.wod_retrieved = False
 		self.wod_desc = ''
+		self.wod_html = ''
+		self.wod_final = ''
 		self.wod_exists = 0
 		self.wod_title = self.wod_level + ' workout for ' + self.wod_day + ' ' + str(self.wod_date)
 
@@ -53,15 +72,19 @@ class WOD:
 			return 0
 
 		save_sql = 'INSERT INTO {tbl} ' \
-			'(workout_date, workout_day, workout_url, workout_alt_url, workout_level, workout_desc, workout_exists)' \
-			' VALUES (\"{wod_dt}\", \"{wod_day}\", \"{wod_url}\", \"{wod_alt_url}\", \"{wod_level}\", \"{wod_desc}\", {wod_exists})'.\
+			'(workout_date, workout_day, workout_url, workout_alt_url, ' \
+			'workout_level, workout_desc, workout_html, workout_final, workout_exists)' \
+			' VALUES (\"{wod_dt}\", \"{wod_day}\", \"{wod_url}\", \"{wod_alt_url}\", ' \
+			'\"{wod_level}\", \"{wod_desc}\", \"{wod_html}\", \"{wod_final}\", {wod_exists})'.\
 			format(tbl=WORKOUTS_TABLE, 
 				wod_dt=self.wod_date,
 				wod_day=self.wod_day,
 				wod_url=self.wod_url,
 				wod_alt_url=self.wod_alt_url,
 				wod_level=self.wod_level,
-				wod_desc=self.wod_desc.encode('utf8'),
+				wod_desc=self.wod_desc,
+				wod_html=self.wod_html,
+				wod_final=self.wod_final,
 				wod_exists=self.wod_exists)
 
 		exec_sql(save_sql)
@@ -81,4 +104,7 @@ class WOD:
 		if self.wod_exists:
 			soup = BeautifulSoup(response.text, 'html.parser')
 			wod_text = soup.find("meta",  property="og:description")
-			self.wod_desc = wod_text['content']
+			wod_html = soup.find("div", class_="entry-content")
+			self.wod_html = str(wod_html).replace("'", "&#39;").replace('"', "&quot;")
+			self.wod_desc = str(wod_html).replace("'", "&#39;").replace('"', "&quot;")
+			# self.wod_desc = '<p>' + re.sub(r'<.*?>', '', temp) + '</p>'

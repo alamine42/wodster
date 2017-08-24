@@ -43,21 +43,6 @@ def update_wods():
 
 def main():
 	update_wods()
-	
-	# for key in sorted(last_week_wod_dict.iterkeys()):
-	# 	wod_instance = last_week_wod_dict[key][0]
-	# 	print('%s - %s ' % (wod_instance.wod_level, wod_instance.wod_date))
-	# 	if key != 7:
-	# 		print(get_workout(wod_instance.wod_url, wod_instance.alt_wod_url))
-	# 	else:
-	# 		print('No workout on Sunday')
-	# 	print('-------------------\n')
-
-# def print_dict(my_dict):
-# 	for key in sorted(my_dict.iterkeys()):
-# 		print('Key: %s' % (key))
-# 		print('Value: %s' % (my_dict[key]))
-# 		print('----------------------')
 
 if __name__ == '__main__':
 	main()

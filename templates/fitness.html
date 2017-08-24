@@ -1,0 +1,19 @@
+{% extends "main.html" %}
+{% block content %}
+
+    <div class="row">
+
+    {% for wod in weekly_wods['fitness'] %}
+
+        <div class="col-lg-2">
+            <h3>{{ wod[1] }}</h3>
+            <h3>{{ wod[0] }}</h3>
+            {{ wod[5] | safe }}
+        </div>
+        
+    {% endfor %}
+    </div>
+
+
+
+{% endblock %}

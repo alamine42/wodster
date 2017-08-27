@@ -3,10 +3,6 @@ import datetime
 import requests
 import re
 
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
-
 from bs4 import BeautifulSoup
 from html2text import html2text
 from utils import exec_sql

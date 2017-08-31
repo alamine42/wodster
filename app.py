@@ -104,6 +104,29 @@ def view_last_week():
 
 	return render_template('index.html', weekly_wods=last_week_wods)
 
+@app.route("/lastyear")
+def view_last_year():
+	update_wods()
+
+	today = date.today()
+	one_year_ago = today - timedelta(days=365)
+
+	days_since_start_of_week = one_year_ago.weekday()
+	days_till_end_of_week = 7 - one_year_ago.weekday()
+
+	previous_monday_date = one_year_ago - timedelta(days=days_since_start_of_week)
+	following_monday_date = one_year_ago + timedelta(days=days_till_end_of_week)
+
+	last_year_fitness_wods = get_workouts(previous_monday_date, following_monday_date, 'fitness')
+	last_year_performance_wods = get_workouts(previous_monday_date, following_monday_date, 'performance')
+
+	last_year_wods = {
+		'fitness': last_year_fitness_wods, 
+		'performance': last_year_performance_wods
+		}
+
+	return render_template('index.html', weekly_wods=last_year_wods)
+
 if __name__ == '__main__':
 	app.run(debug=True)
 

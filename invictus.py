@@ -13,7 +13,7 @@ def get_latest_wod(level):
 	if results[0][0] is not None:
 		latest_date_str = results[0][0]
 	else:
-		latest_date_str = '2017-08-01'
+		latest_date_str = '2016-06-01'
 	
 	return datetime.strptime(latest_date_str, '%Y-%m-%d').date()
 

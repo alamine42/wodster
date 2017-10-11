@@ -9,13 +9,19 @@ def get_latest_wod(level):
 	latest_wod_sql = 'SELECT MAX(workout_date) FROM {tbl} WHERE workout_level = \"{wod_level}\"'.\
 		format(tbl=WORKOUTS_TABLE, wod_level=level)
 
+	today = date.today()
+	days_subtract = today.weekday() + 7
+	last_monday = today - timedelta(days=days_subtract)
+
 	results = exec_sql(latest_wod_sql)
 	if results[0][0] is not None:
 		latest_date_str = results[0][0]
-	else:
-		latest_date_str = '2016-06-01'
+		latest_wod_date = datetime.strptime(latest_date_str, '%Y-%m-%d').date()
+		if latest_wod_date > last_monday:
+			return latest_wod_date
+
+	return last_monday
 	
-	return datetime.strptime(latest_date_str, '%Y-%m-%d').date()
 
 def get_list_dates_to_retrieve(level):
 

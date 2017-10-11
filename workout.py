@@ -84,7 +84,7 @@ class WOD:
 				wod_exists=self.wod_exists)
 
 		exec_sql(save_sql)
-		print('%s saved!' % self.wod_title)
+		# print('%s saved!' % self.wod_title)
 		return 1		
 
 	def retrieve(self):

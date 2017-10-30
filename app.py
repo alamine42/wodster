@@ -26,7 +26,6 @@ def get_workouts(starting_date, ending_date, level='fitness'):
 
 @app.route("/")
 def view_all():
-	update_wods()
 
 	today = date.today()
 	days_since_start_of_week = today.weekday()
@@ -47,7 +46,6 @@ def view_all():
 
 @app.route("/fitness")
 def view_fitness():
-	update_wods()
 
 	today = date.today()
 	days_since_start_of_week = today.weekday()
@@ -66,7 +64,6 @@ def view_fitness():
 
 @app.route("/performance")
 def view_performance():
-	update_wods()
 
 	today = date.today()
 	days_since_start_of_week = today.weekday()
@@ -85,7 +82,6 @@ def view_performance():
 
 @app.route("/lastweek")
 def view_last_week():
-	update_wods()
 
 	today = date.today()
 	days_since_start_of_week = today.weekday()
@@ -106,7 +102,6 @@ def view_last_week():
 
 @app.route("/lastyear")
 def view_last_year():
-	update_wods()
 
 	today = date.today()
 	one_year_ago = today - timedelta(days=365)

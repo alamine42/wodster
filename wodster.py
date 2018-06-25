@@ -1,8 +1,8 @@
 from __future__ import print_function
 
+import argparse
 from datetime import datetime, date, timedelta
 
-from workout import WOD, WORKOUTS_TABLE, LEVELS
 from utils import exec_sql
 
 def get_latest_wod(level):
@@ -13,7 +13,7 @@ def get_latest_wod(level):
 	days_subtract = today.weekday() + 7
 	last_monday = today - timedelta(days=days_subtract)
 
-	results = exec_sql(latest_wod_sql)
+	results = exec_sql(latest_wod_sql, WORKOUTS_FILE)
 	if results[0][0] is not None:
 		latest_date_str = results[0][0]
 		latest_wod_date = datetime.strptime(latest_date_str, '%Y-%m-%d').date()
@@ -29,7 +29,7 @@ def get_list_dates_to_retrieve(level):
 	latest_wod_date = get_latest_wod(level)
 	today = date.today()
 	delta = today - latest_wod_date
-	for i in range(1, delta.days + 1):
+	for i in range(1, delta.days):
 		list_of_dates_to_retrieve.append(latest_wod_date + timedelta(days=i))		
 	return list_of_dates_to_retrieve
 
@@ -43,6 +43,7 @@ def update_wods():
 				wod = WOD(wod_date, wod_day, level)
 				wod.retrieve()
 				wod.save()
+				# print(wod)
 			print('All WODs updated for %s' % level)
 		else:
 			print('Nothing to update for %s' % level)
@@ -51,4 +52,18 @@ def main():
 	update_wods()
 
 if __name__ == '__main__':
-	main()
+	
+	parser = argparse.ArgumentParser(description='WODSTER')
+	parser.add_argument('-p', '--program', type=str,  
+		default='comptrain',
+		choices=['comptrain', 'invictus'],
+		help='Specify source programming (Default: comptrain)'
+		)
+
+	args = parser.parse_args()
+	if args.program == 'invictus':
+		from get_invictus import WOD, WORKOUTS_TABLE, LEVELS, WORKOUTS_FILE
+	else:
+		from get_comptrain import WOD, WORKOUTS_TABLE, LEVELS, WORKOUTS_FILE
+
+	print(update_wods())

@@ -2,32 +2,22 @@
 {% block content %}
 
     <div class="row">
-
-    {% for wod in weekly_wods['performance'] %}
-
-        <div class="col-lg-2">
-            <h3>{{ wod[1] }}</h3>
-            <h3>{{ wod[0] }}</h3>
+        <div class="col-lg-12">
+            <h3>{{ weekly_wods['performance'][0][1] }}, {{ weekly_wods['performance'][0][0] }}</h3>
+        </div>
+        <div class="col-lg-6">
             <br />
             <h4>Performance</h4>
-            {{ wod[5] | safe }}
+            {{ weekly_wods['performance'][0][5] | safe }}
         </div>
-        
-    {% endfor %}
+        <div class="col-lg-6">
+            <br />
+            <h4>Fitness</h4>
+            {{ weekly_wods['fitness'][0][5] | safe }}
+        </div>
     </div>
-
     <div class="row">
 
-    {% for wod in weekly_wods['fitness'] %}
-
-        <div class="col-lg-2">
-            <h4>Fitness</h4>
-            {{ wod[5] | safe }}
-        </div>
-        
-    {% endfor %}
-    </div>
-
-
+        {{ data['today'] }}
 
 {% endblock %}

@@ -24,6 +24,10 @@ def get_workouts(starting_date, ending_date, level='fitness'):
 	wods = exec_sql(query)
 	return wods
 
+def get_week_start_end(week):
+	pass
+
+
 @app.route("/")
 def view_all():
 
@@ -42,7 +46,11 @@ def view_all():
 		'performance': this_week_performance_wods
 		}
 
-	return render_template('index.html', weekly_wods=this_week_wods)
+	data = {
+		'today': today
+	}
+
+	return render_template('index.html', weekly_wods=this_week_wods, data=data)
 
 @app.route("/fitness")
 def view_fitness():
@@ -123,6 +131,6 @@ def view_last_year():
 	return render_template('index.html', weekly_wods=last_year_wods)
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	app.run(port=8000, debug=True)
 
 

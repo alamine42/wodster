@@ -65,15 +65,15 @@ class WOD:
 	def save(self):
 
 		if not self.wod_exists:
-			print('%s does not exist!' % (self.wod_url))
+			print('%s does not exist!' % (self.wod_alt_url))
 			return 0
 		
 		if self.is_saved():
-			print('%s already saved!' % self.wod_url)
+			print('%s already saved!' % self.wod_alt_url)
 			return 0
 
 		if len(self.wod_desc) == 0:
-			print('%s has no description!' % self.wod_url)
+			print('%s has no description!' % self.wod_alt_url)
 			return 0
 
 		save_sql = 'INSERT INTO {tbl} ' \

@@ -65,22 +65,22 @@ class WOD:
 	def save(self):
 
 		if not self.wod_exists:
-			print('%s does not exist!' % (self.wod_title))
+			print('%s does not exist!' % (self.wod_url))
 			return 0
 		
 		if self.is_saved():
-			print('%s already saved!' % self.wod_title)
+			print('%s already saved!' % self.wod_url)
 			return 0
 
 		if len(self.wod_desc) == 0:
-			print('%s has no description!' % self.wod_title)
+			print('%s has no description!' % self.wod_url)
 			return 0
 
 		save_sql = 'INSERT INTO {tbl} ' \
 			'(workout_date, workout_day, workout_url, workout_alt_url, ' \
-			'workout_level, workout_desc, workout_html, workout_final, workout_exists)' \
+			'workout_level, workout_desc, workout_final, workout_exists)' \
 			' VALUES (\"{wod_dt}\", \"{wod_day}\", \"{wod_url}\", \"{wod_alt_url}\", ' \
-			'\"{wod_level}\", \"{wod_desc}\", \"{wod_html}\", \"{wod_final}\", {wod_exists})'.\
+			'\"{wod_level}\", \"{wod_desc}\", \"{wod_final}\", {wod_exists})'.\
 			format(tbl=WORKOUTS_TABLE, 
 				wod_dt=self.wod_date,
 				wod_day=self.wod_day,
@@ -88,7 +88,6 @@ class WOD:
 				wod_alt_url=self.wod_alt_url,
 				wod_level=self.wod_level,
 				wod_desc=self.wod_desc,
-				wod_html=self.wod_html,
 				wod_final=self.wod_final,
 				wod_exists=self.wod_exists)
 
@@ -119,6 +118,6 @@ class WOD:
 				in open_wod_pieces
 				]
 			self.wod_desc = '<PP>'.join(open_wod_pieces_text)
-			self.wod_html = str(self.wod_html).replace("'", "&#39;").replace('"', "&quot;")
+			# self.wod_html = str(self.wod_html).replace("'", "&#39;").replace('"', "&quot;")
 		else:
 			print("Workout does not exist.")

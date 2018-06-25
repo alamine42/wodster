@@ -102,3 +102,5 @@ ENV/
 
 .DS_Store
 invictus_db
+comptrain_db
+*.db

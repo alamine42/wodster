@@ -118,6 +118,7 @@ class WOD:
 				in open_wod_pieces
 				]
 			self.wod_desc = '<PP>'.join(open_wod_pieces_text)
+			self.wod_desc = self.wod_desc.encode('ascii', 'ignore').decode('ascii')
 			# self.wod_html = str(self.wod_html).replace("'", "&#39;").replace('"', "&quot;")
 		else:
 			print("Workout does not exist.")

@@ -1,10 +1,8 @@
 import sqlite3
 
-WORKOUTS_FILE = 'invictus.db'
-
-def exec_sql(sql):
+def exec_sql(sql, db_file):
 	# print(sql)
-	conn = sqlite3.connect(WORKOUTS_FILE)
+	conn = sqlite3.connect(db_file)
 	c = conn.cursor()
 	c.execute(sql)
 	results = c.fetchall()

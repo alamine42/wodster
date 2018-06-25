@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from html2text import html2text
 from utils import exec_sql
 
+WORKOUTS_FILE = 'invictus.db'
 WORKOUTS_TABLE = 'invictus_workouts'
 LEVELS = ['fitness', 'performance']
 BASE_URL = 'http://www.crossfitinvictus.com/wod/'

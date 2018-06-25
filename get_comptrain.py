@@ -33,7 +33,7 @@ class WOD:
 		self.wod_day = wod_day
 		self.wod_level = level
 		self.wod_url = BASE_URL + self.wod_date_str + '/'
-		self.wod_alt_url = self.wod_url
+		self.wod_alt_url = self.wod_url.encode('ascii', 'ignore').decode('ascii')
 		self.wod_retrieved = False
 		self.wod_desc = ''
 		self.wod_html = ''
@@ -54,7 +54,7 @@ class WOD:
 	def is_saved(self):
 		select_sql = 'SELECT count(1) FROM {tbl} ' \
 			' WHERE workout_url = \"{wod_url}\"'.\
-			format(tbl=WORKOUTS_TABLE, wod_url=self.wod_url)
+			format(tbl=WORKOUTS_TABLE, wod_url=self.wod_alt_url)
 		
 		results = exec_sql(select_sql, WORKOUTS_FILE)
 		if results[0][0] > 0:
@@ -84,7 +84,7 @@ class WOD:
 			format(tbl=WORKOUTS_TABLE, 
 				wod_dt=self.wod_date,
 				wod_day=self.wod_day,
-				wod_url=self.wod_url,
+				wod_url=self.wod_alt_url,
 				wod_alt_url=self.wod_alt_url,
 				wod_level=self.wod_level,
 				wod_desc=self.wod_desc,
@@ -118,7 +118,7 @@ class WOD:
 				in open_wod_pieces
 				]
 			self.wod_desc = '<PP>'.join(open_wod_pieces_text)
-			self.wod_desc = self.wod_desc.encode('ascii', 'ignore').decode('ascii')
+			# self.wod_desc = self.wod_desc
 			# self.wod_html = str(self.wod_html).replace("'", "&#39;").replace('"', "&quot;")
 		else:
 			print("Workout does not exist.")

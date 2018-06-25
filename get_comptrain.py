@@ -58,9 +58,9 @@ class WOD:
 		
 		results = exec_sql(select_sql, WORKOUTS_FILE)
 		if results[0][0] > 0:
-			return True
+			return 1
 		else:
-			return False
+			return 0
 
 	def save(self):
 
